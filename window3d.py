@@ -3,14 +3,11 @@ from PIL import Image, ImageTk
 from tkinter import Tk, Frame, Canvas, ALL, CENTER
 class shape:
     def __init__(self, points):
-        self.points = points
+        self.points = np.array(points)
         self.modelPoints = np.flip(np.rot90(self.points), 0)
         self.updatexy(np.array([[1,0,0],[0,0,1]]))
-        print(self.points)
-        print(self.modelPoints)
     def updatexy(self, matrix):
         self.xy = np.rot90(np.flip(matrix.dot(self.modelPoints),0),3)
-        print(self.xy)
         self.lastMatrix = matrix
     def draw(self, canvas):
         pass
@@ -22,6 +19,8 @@ class shape:
     def init(self):
         pass
 class point(shape):
+    def __init__(self, point):
+        super().__init__([point])
     def draw(self, canvas):
         canvas.create_image(self.xy[0][0], self.xy[0][1], image=self.img,
                 anchor=CENTER)
