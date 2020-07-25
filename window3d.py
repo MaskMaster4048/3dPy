@@ -6,8 +6,11 @@ class shape:
         self.points = points
         self.modelPoints = np.flip(np.rot90(self.points), 0)
         self.updatexy(np.array([[1,0,0],[0,0,1]]))
+        print(self.points)
+        print(self.modelPoints)
     def updatexy(self, matrix):
-        self.xy = np.rot90(np.flip(matrix*self.points,0),3)
+        self.xy = np.rot90(np.flip(matrix.dot(self.modelPoints),0),3)
+        print(self.xy)
         self.lastMatrix = matrix
     def draw(self, canvas):
         pass
@@ -43,15 +46,14 @@ class screen(Canvas):
         shape.init()
         self.items.append(shape)
         self.reloadGraphics()
-
+#depreciated
 class window(Frame):
-    def __init__(self,x,y):
+    def __init__(self,canvas):
         super().__init__()
         self.master.title('3d window')
-        self.board = screen(x,y)
+        self.board = canvas
         self.pack()
-def createWindow(x,y):
+def createWindow(canvas):
     root = Tk()
-    nib = window(x,y)
+    #nib = window(canvas)
     root.mainloop()
-    return nib
