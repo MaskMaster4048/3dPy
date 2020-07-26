@@ -1,6 +1,7 @@
 import numpy as np
 from PIL import Image, ImageTk
 from tkinter import Tk, Frame, Canvas, ALL, CENTER
+import math
 class shape:
     def __init__(self, points):
         self.subItems=[]
@@ -58,6 +59,7 @@ class screen(Canvas):
        self.items=[]
        self.scaleMatrix=np.array([[1,0,0],[0,0,-1]])
        self.transformMatrix=np.array([[x/2,y/2]])
+       self.degs=[0,0,0]
        self.pack()
     def reloadGraphics(self):
         self.delete(ALL)
@@ -66,14 +68,10 @@ class screen(Canvas):
             shape.draw(self)
     def addshape(self, shape):
         self.items.append(shape)
-#depreciated
-class window(Frame):
-    def __init__(self,canvas):
-        super().__init__()
-        self.master.title('3d window')
-        self.board = canvas
-        self.pack()
-def createWindow(canvas):
-    root = Tk()
-    #nib = window(canvas)
-    root.mainloop()
+    def rotZ(self, deg):
+        self.degs[2]+=deg
+        self.remakeMatrix()
+    def remakeMatrix(self):
+        self.scaleMatrix=np.array([
+            [math.cos(self.degs[2]), math.sin(self.degs[2]), 0],
+            [                0,                 0,-1]])
