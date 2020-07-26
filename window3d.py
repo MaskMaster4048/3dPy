@@ -5,17 +5,18 @@ class shape:
     def __init__(self, points):
         self.points = np.array(points)
         self.modelPoints = np.flip(np.rot90(self.points), 0)
-        self.updatexy(np.array([[1,0,0],[0,0,1]]))
-    def updatexy(self, matrix):
-        self.xy = np.rot90(np.flip(matrix.dot(self.modelPoints),0),3)
-        self.lastMatrix = matrix
+        self.updatexy(np.array([[1,0,0],[0,0,1]]),np.array([[0,0]]))
+    def updatexy(self, sm, tm):
+        self.xy = np.rot90(np.flip(sm.dot(self.modelPoints)+np.flip(np.rot90(tm),0),0),3)
+        self.lastSM = sm
+        self.lastTM = tm
     def draw(self, canvas):
         pass
     def translate(self, t):
         for point in self.points:
             point = point+t
         self.modelPoints = np.flip(np.rot90(self.points), 0)
-        self.updatexy(self.lastMatrix)
+        self.updatexy(self.lastSM, self.lastTM)
     def init(self):
         pass
 class point(shape):
@@ -31,20 +32,22 @@ class point(shape):
 class line(shape):
     def draw(self, canvas):
         canvas.create_line(self.xy[0][0], self.xy[0][1], self.xy[1][0], self.xy[1][1])
+
 class screen(Canvas):
     def __init__(self, x, y):
        super().__init__(width=x, height=y, background="white")
        self.items=[]
-       self.viewingMatrix=np.array([[1,0,0],[0,0,1]])
+       self.scaleMatrix=np.array([[1,0,0],[0,0,-1]])
+       self.transformMatrix=np.array([[x/2,y/2]])
        self.pack()
     def reloadGraphics(self):
         self.delete(ALL)
         for shape in self.items:
+            shape.updatexy(self.scaleMatrix, self.transformMatrix)
             shape.draw(self)
     def addshape(self, shape):
         shape.init()
         self.items.append(shape)
-        self.reloadGraphics()
 #depreciated
 class window(Frame):
     def __init__(self,canvas):
