@@ -2,6 +2,7 @@ import numpy as np
 from PIL import Image, ImageTk
 from tkinter import Tk, Frame, Canvas, ALL, CENTER
 import math
+import time
 class shape:
     def __init__(self, points):
         self.subItems=[]
@@ -59,7 +60,7 @@ class screen(Canvas):
        self.items=[]
        self.scaleMatrix=np.array([[1,0,0],[0,0,-1]])
        self.transformMatrix=np.array([[x/2,y/2]])
-       self.degs=[0,0,0]
+       self.degs=np.array([0,0,0])
        self.pack()
     def reloadGraphics(self):
         self.delete(ALL)
@@ -73,5 +74,21 @@ class screen(Canvas):
         self.remakeMatrix()
     def remakeMatrix(self):
         self.scaleMatrix=np.array([
-            [math.cos(self.degs[2]), math.sin(self.degs[2]), 0],
+            [math.cos(math.radians(self.degs[2]))
+                , math.sin(math.radians(self.degs[2])), 0],
             [                0,                 0,-1]])
+    def startAnimate(self, step, action, ticks):
+        self.animateVar=True
+        self.animateStep=step
+        self.animateAction=action
+        self.ticks=ticks
+        self.animate()
+    def animate(self):
+        self.ticks -= 1
+        if self.ticks !=0 and self.animateVar==True:
+            self.animateAction()
+            self.remakeMatrix()
+            self.reloadGraphics()
+            self.after(round(1000.0/self.animateStep), self.animate)
+    def stopAnimate(self):
+        self.animateVar=False
