@@ -93,11 +93,11 @@ class screen(Canvas):
         self.ticks=ticks
         self.animate()
     def animate(self):
-        self.ticks -= 1
         if self.ticks !=0 and self.animateVar==True:
             self.animateAction()
             self.remakeMatrix()
             self.reloadGraphics()
             self.after(round(1000.0/self.animateStep), self.animate)
+            self.ticks -= 1
     def stopAnimate(self):
         self.animateVar=False
