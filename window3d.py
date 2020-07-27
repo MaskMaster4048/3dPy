@@ -49,7 +49,7 @@ class rect(shape):
                     [points[i][0], points[1][1], points[j][2]]]))
                 self.subItems.append(line([
                     [points[0][0], points[i][1], points[j][2]],
-                    [points[1][0], points[j][1], points[j][2]]]))
+                    [points[1][0], points[i][1], points[j][2]]]))
     def draw(self, canvas):
         for line in self.subItems:
             line.draw(canvas)
@@ -69,14 +69,23 @@ class screen(Canvas):
             shape.draw(self)
     def addshape(self, shape):
         self.items.append(shape)
+    def rotX(self, deg):
+        self.degs[0]+=deg
+        self.remakeMatrix()
+    def rotY(self, deg):
+        self.degs[1]+=deg
+        self.remakeMatrix()
     def rotZ(self, deg):
         self.degs[2]+=deg
         self.remakeMatrix()
     def remakeMatrix(self):
+        def sin(n):
+            return math.sin(math.radians(self.degs[n]))
+        def cos(n):
+            return math.cos(math.radians(self.degs[n]))
         self.scaleMatrix=np.array([
-            [math.cos(math.radians(self.degs[2]))
-                , math.sin(math.radians(self.degs[2])), 0],
-            [                0,                 0,-1]])
+            [ cos(1)*cos(2)-sin(0)*sin(1)*sin(2), -cos(1)*sin(2)-sin(0)*sin(1)*cos(2), -cos(0)*sin(1)],
+            [-sin(1)*cos(2)-sin(0)*cos(1)*sin(2),  sin(1)*sin(2)-sin(0)*cos(1)*cos(2), -cos(0)*cos(1)]])
     def startAnimate(self, step, action, ticks):
         self.animateVar=True
         self.animateStep=step
