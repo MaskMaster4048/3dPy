@@ -4,7 +4,7 @@ import numpy as np
 import time
 master = Tk()
 master.title('3d Canvas')
-c = c3d.screen(200,200)
+c = c3d.screen(200,200, master)
 p1=c3d.point([-35, -40, -25])
 p2=c3d.point([25,10,25])
 #c.addshape(p1)

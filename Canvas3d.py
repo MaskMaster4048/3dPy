@@ -55,8 +55,8 @@ class rect(shape):
             line.draw(canvas)
 
 class screen(Canvas):
-    def __init__(self, x, y):
-       super().__init__(width=x, height=y, background="white")
+    def __init__(self, x, y, root):
+       super().__init__(root, width=x, height=y, background="white")
        self.items=[]
        self.scaleMatrix=np.array([[1,0,0],[0,0,-1]])
        self.transformMatrix=np.array([[x/2,y/2]])
