@@ -72,13 +72,13 @@ class screen(Canvas):
     def addshape(self, shape):
         self.items.append(shape)
     def rotX(self, deg):
-        self.degs[0]+=deg
+        self.degs[0] = (self.degs[0]+deg)%360
         self.remakeMatrix()
     def rotY(self, deg):
-        self.degs[1]+=deg
+        self.degs[1] = (self.degs[1]+deg)%360
         self.remakeMatrix()
     def rotZ(self, deg):
-        self.degs[2]+=deg
+        self.degs[2] = (self.degs[2]+deg)%360
         self.remakeMatrix()
     def remakeMatrix(self):
         def sin(n):
@@ -91,7 +91,7 @@ class screen(Canvas):
     def addAnimation(self, step, action, ticks):
         self.animationList.append([step, action, ticks])
     def startAnimation(self):
-        alist = self.animtionList.popleft()
+        alist = self.animationList.popleft()
         self.animateVar=True
         self.animateStep=alist[0]
         self.animateAction=alist[1]
@@ -104,7 +104,7 @@ class screen(Canvas):
             self.reloadGraphics()
             self.after(round(1000.0/self.animateStep), self.animate)
             self.ticks -= 1
-        if self.ticks==0 and self.animateVar==True:
+        if self.ticks==0 and self.animateVar==True and len(self.animationList)!=0:
             self.startAnimation()
     def stopAnimation(self):
         self.animateVar=False

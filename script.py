@@ -19,6 +19,7 @@ def turn():
     c.rotZ(1)
     c.rotX(1)
     c.rotY(1)
-c.startAnimate(30, turn, 360)
+c.addAnimation (30, turn, 360)
+c.startAnimation()
 c.reloadGraphics()
 mainloop()
