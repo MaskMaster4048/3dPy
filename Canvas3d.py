@@ -1,6 +1,7 @@
 import numpy as np
 from PIL import Image, ImageTk
 from tkinter import Tk, Frame, Canvas, ALL, CENTER
+from collections import deque
 import math
 import time
 class shape:
@@ -61,6 +62,7 @@ class screen(Canvas):
        self.scaleMatrix=np.array([[1,0,0],[0,0,-1]])
        self.transformMatrix=np.array([[x/2,y/2]])
        self.degs=np.array([0,0,0])
+       self.animationList=deque()
        self.pack()
     def reloadGraphics(self):
         self.delete(ALL)
@@ -86,11 +88,14 @@ class screen(Canvas):
         self.scaleMatrix=np.array([
             [ cos(1)*cos(2)-sin(0)*sin(1)*sin(2), -cos(1)*sin(2)-sin(0)*sin(1)*cos(2), -cos(0)*sin(1)],
             [-sin(1)*cos(2)-sin(0)*cos(1)*sin(2),  sin(1)*sin(2)-sin(0)*cos(1)*cos(2), -cos(0)*cos(1)]])
-    def startAnimate(self, step, action, ticks):
+    def addAnimation(self, step, action, ticks):
+        self.animationList.append([step, action, ticks])
+    def startAnimation(self):
+        alist = self.animtionList.popleft()
         self.animateVar=True
-        self.animateStep=step
-        self.animateAction=action
-        self.ticks=ticks
+        self.animateStep=alist[0]
+        self.animateAction=alist[1]
+        self.ticks=alist[2]
         self.animate()
     def animate(self):
         if self.ticks !=0 and self.animateVar==True:
@@ -99,5 +104,10 @@ class screen(Canvas):
             self.reloadGraphics()
             self.after(round(1000.0/self.animateStep), self.animate)
             self.ticks -= 1
-    def stopAnimate(self):
+        if self.ticks==0 and self.animateVar==True:
+            self.startAnimation()
+    def stopAnimation(self):
         self.animateVar=False
+    def resumeAnimation(self):
+        self.animateVar=True
+        self.animate()
