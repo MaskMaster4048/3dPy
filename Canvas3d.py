@@ -96,10 +96,11 @@ class screen(Canvas):
         self.animateStep=alist[0]
         self.animateAction=alist[1]
         self.ticks=alist[2]
+        self.prevDegs=self.degs.copy()
         self.animate()
     def animate(self):
         if self.ticks !=0 and self.animateVar==True:
-            self.animateAction()
+            self.animateAction(self.ticks)
             self.remakeMatrix()
             self.reloadGraphics()
             self.after(round(1000.0/self.animateStep), self.animate)
@@ -111,3 +112,25 @@ class screen(Canvas):
     def resumeAnimation(self):
         self.animateVar=True
         self.animate()
+    def clearAnimation(self):
+        self.animationList = deque()
+    def resetAnimation(self):
+        self.degs=[0,0,0]
+        self.remakeMatrix()
+    def smoothMoveTo(self, degsN, seconds):
+        for i in self.degs:
+            if i < 0:
+                i+=360
+        def smoothMove(e):
+            multiplier=(math.cos(math.radians(e))+1)*0.5
+            for i in range(3):
+                self.degs[i]=(
+                    self.prevDegs[i]*(-multiplier+1) +
+                    degsN[i]        *  multiplier )
+        self.addAnimation(180.0/seconds, smoothMove, 180)
+    def smoothReset(self, sec):
+        self.clearAnimation()
+        self.smoothMoveTo([0,0,0], sec)
+        self.resetAnimation()
+        self.reloadGraphics()
+        self.startAnimation()
