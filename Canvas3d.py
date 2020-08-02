@@ -120,12 +120,11 @@ class screen(Canvas):
     def resetAnimation(self):
         self.degs=[0,0,0]
         self.remakeMatrix()
-    def smoothMoveTo(self, degsN, seconds):
+    def addSmoothMoveTo(self, degsN, seconds):
         for i in self.degs:
             if i < 0:
                 i+=360
         def smoothMove(e):
-            print(time.time())
             multiplier=(math.cos(math.radians(e))+1)*0.5
             for i in range(3):
                 self.degs[i]=(
@@ -136,3 +135,7 @@ class screen(Canvas):
         self.clearAnimation()
         self.smoothMoveTo([0,0,0], sec)
         self.startAnimation()
+    def addPause(self, secs):
+        def a(e):
+            pass
+        self.addAnimation(1.0/secs,a,1)

@@ -15,13 +15,14 @@ c.addshape(c3d.point([0,0,0]))
 c.addshape(c3d.point([50,0,0]))
 c.addshape(c3d.point([0,0,50]))
 c.addshape(c3d.point([50,50,50]))
-c.smoothMoveTo(
+c.addSmoothMoveTo(
         [
             random.randint(0,360),
             random.randint(0,360),
             random.randint(0,360)
         ], 3)
-c.smoothMoveTo(
+c.addPause(3)
+c.addSmoothMoveTo(
         [
             random.randint(0,360),
             random.randint(0,360),
