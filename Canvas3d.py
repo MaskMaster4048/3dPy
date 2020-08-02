@@ -4,6 +4,8 @@ from tkinter import Tk, Frame, Canvas, ALL, CENTER
 from collections import deque
 import math
 import time
+import threading #TODO delete later
+import time #TODO delete later
 class shape:
     def __init__(self, points):
         self.subItems=[]
@@ -105,8 +107,9 @@ class screen(Canvas):
             self.reloadGraphics()
             self.after(round(1000.0/self.animateStep), self.animate)
             self.ticks -= 1
-        if self.ticks==0 and self.animateVar==True and len(self.animationList)!=0:
-            self.startAnimation()
+        else:
+            if self.ticks==0 and self.animateVar==True and len(self.animationList)!=0:
+                self.startAnimation()
     def stopAnimation(self):
         self.animateVar=False
     def resumeAnimation(self):
@@ -122,6 +125,7 @@ class screen(Canvas):
             if i < 0:
                 i+=360
         def smoothMove(e):
+            print(time.time())
             multiplier=(math.cos(math.radians(e))+1)*0.5
             for i in range(3):
                 self.degs[i]=(
@@ -131,6 +135,4 @@ class screen(Canvas):
     def smoothReset(self, sec):
         self.clearAnimation()
         self.smoothMoveTo([0,0,0], sec)
-        self.resetAnimation()
-        self.reloadGraphics()
         self.startAnimation()

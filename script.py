@@ -2,6 +2,7 @@ from tkinter import Tk, mainloop
 import Canvas3d as c3d
 import numpy as np
 import time
+import random
 master = Tk()
 master.title('3d Canvas')
 c = c3d.screen(200,200)
@@ -14,13 +15,17 @@ c.addshape(c3d.point([0,0,0]))
 c.addshape(c3d.point([50,0,0]))
 c.addshape(c3d.point([0,0,50]))
 c.addshape(c3d.point([50,50,50]))
-c.rotX(60)
-c.rotY(40)
-c.rotZ(180)
-def s(e):
-    c.reloadGraphics()
-c.addAnimation(10, s, 30)
-c.smoothMoveTo([0,0,0],3)
+c.smoothMoveTo(
+        [
+            random.randint(0,360),
+            random.randint(0,360),
+            random.randint(0,360)
+        ], 3)
+c.smoothMoveTo(
+        [
+            random.randint(0,360),
+            random.randint(0,360),
+            random.randint(0,360)
+        ], 3)
 c.startAnimation()
-c.reloadGraphics()
 mainloop()
