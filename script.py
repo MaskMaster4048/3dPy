@@ -28,5 +28,6 @@ c.addSmoothMoveTo(
             random.randint(0,360),
             random.randint(0,360)
         ], 3)
+c.addSmoothMoveTo([0,0,0], 3)
 c.startAnimation()
 mainloop()

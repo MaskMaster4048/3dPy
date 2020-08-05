@@ -73,14 +73,30 @@ class screen(Canvas):
             shape.draw(self)
     def addshape(self, shape):
         self.items.append(shape)
+    def centerRot(self, rot=None, center=[0,0,0]):
+        if rot is None:
+            rot=self.degs
+        s=rot.copy()
+        for i in range(3):
+            a=s[i]-center[i]
+            if a < -180:
+                a+=360
+            if a > 180:
+                a-=360
+            a+=center[i]
+            s[i]=a
+        return s
     def rotX(self, deg):
-        self.degs[0] = (self.degs[0]+deg)%360
+        self.degs[0]+=deg
+        self.degs=centerRot()
         self.remakeMatrix()
     def rotY(self, deg):
-        self.degs[1] = (self.degs[1]+deg)%360
+        self.degs[1]+=deg
+        self.degs=centerRot()
         self.remakeMatrix()
     def rotZ(self, deg):
-        self.degs[2] = (self.degs[2]+deg)%360
+        self.degs[2]+=deg
+        self.degs=centerRot()
         self.remakeMatrix()
     def remakeMatrix(self):
         def sin(n):
@@ -90,8 +106,8 @@ class screen(Canvas):
         self.scaleMatrix=np.array([
             [ cos(1)*cos(2)-sin(0)*sin(1)*sin(2), -cos(1)*sin(2)-sin(0)*sin(1)*cos(2), -cos(0)*sin(1)],
             [-sin(1)*cos(2)-sin(0)*cos(1)*sin(2),  sin(1)*sin(2)-sin(0)*cos(1)*cos(2), -cos(0)*cos(1)]])
-    def addAnimation(self, step, action, ticks):
-        self.animationList.append([step, action, ticks])
+    def addAnimation(self, step, action, ticks, start=None):
+        self.animationList.append([step, action, ticks, start])
     def startAnimation(self):
         alist = self.animationList.popleft()
         self.animateVar=True
@@ -99,6 +115,8 @@ class screen(Canvas):
         self.animateAction=alist[1]
         self.ticks=alist[2]
         self.prevDegs=self.degs.copy()
+        if alist[3]!=None:
+            alist[3]()
         self.animate()
     def animate(self):
         if self.ticks !=0 and self.animateVar==True:
@@ -121,16 +139,15 @@ class screen(Canvas):
         self.degs=[0,0,0]
         self.remakeMatrix()
     def addSmoothMoveTo(self, degsN, seconds):
-        for i in self.degs:
-            if i < 0:
-                i+=360
+        def start():
+            self.centerRot(self.prevDegs, degsN)
         def smoothMove(e):
             multiplier=(math.cos(math.radians(e))+1)*0.5
             for i in range(3):
                 self.degs[i]=(
                     self.prevDegs[i]*(-multiplier+1) +
                     degsN[i]        *  multiplier )
-        self.addAnimation(180.0/seconds, smoothMove, 180)
+        self.addAnimation(180.0/seconds, smoothMove, 180, start)
     def smoothReset(self, sec):
         self.clearAnimation()
         self.smoothMoveTo([0,0,0], sec)
